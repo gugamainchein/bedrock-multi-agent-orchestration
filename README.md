@@ -466,6 +466,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Serverless Framework Documentation](https://www.serverless.com/framework/docs/)
 - [AWS Lambda Powertools for Python](https://awslabs.github.io/aws-lambda-powertools-python/)
 
----
+## 🧠 Author
 
-Built with ❤️ by Gustavo Mainchein
+Gustavo Mainchein — AI Solutions Development Specialist - [LinkedIn](https://www.linkedin.com/in/gustavomainchein)
+
+## 📜 License
+
+This project is licensed under the MIT License.
