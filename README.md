@@ -114,11 +114,11 @@ environment:
 
 1. Configure your Prompt Management, based on:
 
-LLM: amazon.nova-micro-v1:0
-Temperature: 0
-Top P: 0.9
-Maximum output tokens: 50
-Prompt:
+- LLM: amazon.nova-micro-v1:0
+- Temperature: 0
+- Top P: 0.9
+- Maximum output tokens: 50
+- Prompt:
 
 ```md
 <task> Categorize the user's message into one of two categories based on the **overall intention**. </task> <instructions> 1. Carefully read the user's message: <input>{{input}}</input> 2. Analyze the main intention expressed in the message. 3. Classification criteria: - <category>HR</category>: Messages related to human resources, such as: _ Salary _ Benefits \_ Company <category>GENERAL</category>: Messages related to general topics for internet search, which do not fit into the previous categories. 4. Respond with exactly one of the following formats: - If related to human resources: HR - If related to general topics: GENERAL </instructions> <constraints> - Provide **only** the categorized response in the specified format - Do not include explanations, comments, or additional text - Base the classification on the **main intention** of the message in {{input}} - If the message is ambiguous, classify based on the most prominent theme - For messages classified as GENERAL, the system should ask how it can help or request more details about what the user wants to discuss </constraints>
