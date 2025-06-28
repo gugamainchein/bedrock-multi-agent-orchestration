@@ -1,0 +1,12 @@
+invoke_flow:
+  handler: src/controllers/tools/invoke_flow.handler
+  layers:
+    - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:14
+    - !Ref ProjectCustomDependenciesLambdaLayer
+
+assistant_response:
+  handler: src/controllers/assistant/assistant_response.handler
+  layers:
+    - arn:aws:lambda:${aws:region}:017000801446:layer:AWSLambdaPowertoolsPythonV3-python312-x86_64:14
+  url:
+    cors: true

@@ -1,0 +1,105 @@
+Resources:
+  BedrockOrchestrationAgentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${param:API_NAME}-${aws:region}-bedrock-orchestration-agent-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowBedrockAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:*
+                  - lambda:*
+                  - s3:*
+                Resource: "*"
+
+  BedrockOrchestrationAgent:
+    Type: AWS::Bedrock::Agent
+    Properties:
+      AgentName: ${param:API_NAME}-${aws:region}-${aws:accountId}-orchestration-agent
+      Instruction: |
+        <instruction>
+        You are virtual AI assistant and your task is to analyze the provided context and generate a relevant response based on your tool.
+        </instruction>
+
+        <context>
+        Role: You are orchestration agent and your role is helping users with any information based on your tool.
+        </context>
+
+        <constraints>
+        1. Always execute your tool to provide the answer for the user request. 
+        2. Provide only the response without any preamble, explanations, or additional information.
+        3. Your response should directly address the given context.
+        </constraints>
+
+        <output_format>
+        Response: [Insert your response here]
+        </output_format>
+      FoundationModel: "us.anthropic.claude-sonnet-4-20250514-v1:0"
+      AgentResourceRoleArn: !GetAtt BedrockOrchestrationAgentRole.Arn
+      AutoPrepare: true
+      Description: "Agent to process orchestration themes"
+      MemoryConfiguration:
+        EnabledMemoryTypes:
+          - SESSION_SUMMARY
+        SessionSummaryConfiguration:
+          MaxRecentSessions: 30
+        StorageDays: 30
+      ActionGroups:
+        - ActionGroupName: invoke_flow
+          ActionGroupExecutor:
+            Lambda: !Sub arn:aws:lambda:${aws:region}:${aws:accountId}:function:${param:API_NAME}-${sls:stage}-invoke_flow
+          ActionGroupState: ENABLED
+          ApiSchema:
+            Payload: |
+              openapi: 3.0.0
+              info:
+                title: Internal Search Tool
+                version: 1.0.0
+                description: Executes a search query using a Lambda-backed POST request.
+              paths:
+                /v1/invoke/flow:
+                  post:
+                    summary: Perform a search
+                    description: Perform a search using the given query and return relevant results.
+                    operationId: performInternalSearch
+                    requestBody:
+                      required: true
+                      content:
+                        application/json:
+                          schema:
+                            type: object
+                            properties:
+                              user_prompt:
+                                type: string
+                                description: User message
+                            required:
+                              - user_prompt
+                    responses:
+                      "200":
+                        description: Accepts any response
+                        content:
+                          application/json: {}
+
+  BedrockOrchestrationAgentAlias:
+    Type: AWS::Bedrock::AgentAlias
+    Properties:
+      AgentId: !Ref BedrockOrchestrationAgent
+      AgentAliasName: "version-1"
+
+  LambdaOrchestrationPermissionForBedrockAgent:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub arn:aws:lambda:${aws:region}:${aws:accountId}:function:${param:API_NAME}-${sls:stage}-invoke_flow
+      Action: lambda:InvokeFunction
+      Principal: bedrock.amazonaws.com
+      SourceArn: !GetAtt BedrockOrchestrationAgent.AgentArn

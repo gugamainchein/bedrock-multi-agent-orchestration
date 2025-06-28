@@ -1,0 +1,64 @@
+Resources:
+  BedrockConsultingAgentRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${param:API_NAME}-${aws:region}-bedrock-consulting-agent-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: bedrock.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AllowBedrockAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:*
+                  - s3:*
+                Resource: "*"
+
+  BedrockConsultingAgent:
+    Type: AWS::Bedrock::Agent
+    Properties:
+      AgentName: ${param:API_NAME}-${aws:region}-${aws:accountId}-consulting-agent
+      KnowledgeBases:
+        - KnowledgeBaseId: P0POGYRRAV
+          KnowledgeBaseState: ENABLED
+          Description: consulting knowledge base
+      Instruction: |
+        <instruction>
+        You are virtual AI assistant and your task is to analyze the provided context and generate a relevant response based on it.
+        </instruction>
+
+        <context>
+        Role: You are an human resources specializing. Your role is helping employees with any information about human resources departament and company.
+        </context>
+
+        <constraints>
+        1. Provide only the response without any preamble, explanations, or additional information.
+        2. Your response should directly address the given context.
+        </constraints>
+
+        <output_format>
+        Response: [Insert your response here]
+        </output_format>
+      FoundationModel: "us.anthropic.claude-sonnet-4-20250514-v1:0"
+      AgentResourceRoleArn: !GetAtt BedrockConsultingAgentRole.Arn
+      AutoPrepare: true
+      Description: "Agent to process human resources themes"
+      MemoryConfiguration:
+        EnabledMemoryTypes:
+          - SESSION_SUMMARY
+        SessionSummaryConfiguration:
+          MaxRecentSessions: 30
+        StorageDays: 30
+
+  BedrockConsultingAgentAlias:
+    Type: AWS::Bedrock::AgentAlias
+    Properties:
+      AgentId: !Ref BedrockConsultingAgent
+      AgentAliasName: "version-1"

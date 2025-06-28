@@ -1,0 +1,47 @@
+org: gustavomainchein
+app: generative-ai
+service: multi-agent-orchestration
+
+provider:
+  name: aws
+  runtime: python3.12
+  timeout: 900
+  memorySize: 256
+  stackTags:
+    workload: "multi-agent-orchestration"
+  deploymentBucket:
+    name: ${param:API_NAME}-${aws:region}-${aws:accountId}
+  iamRoleStatements:
+    - Effect: Allow
+      Resource:
+        - arn:aws:bedrock:${aws:region}:${aws:accountId}:flow/YOUR_FLOW_ID
+        - arn:aws:bedrock:${aws:region}:${aws:accountId}:flow/YOUR_FLOW_ID/alias/YOUR_FLOW_ALIAS_ID
+        - !GetAtt BedrockOrchestrationAgentAlias.AgentAliasArn
+        - !GetAtt BedrockOrchestrationAgent.AgentArn
+      Action:
+        - "bedrock:InvokeAgent"
+        - "bedrock:InvokeFlow"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+  environment:
+    ACCOUNT_ID: ${aws:accountId}
+    APP_NAME: ${param:API_NAME}
+    AGENT_ID: !Ref BedrockOrchestrationAgent
+    AGENT_ALIAS_ID: !GetAtt BedrockOrchestrationAgentAlias.AgentAliasId
+    FLOW_ID: YOUR_FLOW_ID
+    FLOW_ALIAS_ID: YOUR_FLOW_ALIAS_ID
+
+package:
+  patterns:
+    - "!src/layers"
+    - "!node_modules"
+    - "!venv"
+
+functions:
+  - ${file(./infrastructure/api/functions.yml)}
+
+resources:
+  - ${file(./infrastructure/ai/general_agent.yml)}
+  - ${file(./infrastructure/ai/hr_agent.yml)}
+  - ${file(./infrastructure/ai/orchestration_agent.yml)}
