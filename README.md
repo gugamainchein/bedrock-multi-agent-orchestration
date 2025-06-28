@@ -4,7 +4,7 @@
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![AWS Bedrock](https://img.shields.io/badge/AWS-Bedrock-FF9900.svg)](https://aws.amazon.com/bedrock/)
 
-A production-ready framework for building and deploying sophisticated multi-agent AI systems using AWS Bedrock. This project enables seamless orchestration between specialized AI agents through AWS Bedrock Flow, maintaining conversation context and delivering coherent user experiences.
+A simplified framework for building and deploying sophisticated multi-agent AI systems using AWS Bedrock. This project enables seamless orchestration between specialized AI agents through AWS Bedrock Flow, maintaining conversation context and delivering coherent user experiences.
 
 ## 🌟 Features
 
