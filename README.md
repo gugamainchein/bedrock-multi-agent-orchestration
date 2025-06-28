@@ -3,7 +3,6 @@
 [![Serverless Framework](https://img.shields.io/badge/serverless-v3-orange.svg)](https://www.serverless.com/)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![AWS Bedrock](https://img.shields.io/badge/AWS-Bedrock-FF9900.svg)](https://aws.amazon.com/bedrock/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 A production-ready framework for building and deploying sophisticated multi-agent AI systems using AWS Bedrock. This project enables seamless orchestration between specialized AI agents through AWS Bedrock Flow, maintaining conversation context and delivering coherent user experiences.
 
@@ -18,7 +17,7 @@ A production-ready framework for building and deploying sophisticated multi-agen
 
 ## 🏗️ Architecture
 
-![Architecture Diagram](./assests/architecture-diagram.png)
+![Architecture Diagram](./assets/architecture-diagram.png)
 
 The system consists of:
 
