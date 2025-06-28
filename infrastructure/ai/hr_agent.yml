@@ -2,7 +2,7 @@ Resources:
   BedrockConsultingAgentRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ${param:API_NAME}-${aws:region}-bedrock-consulting-agent-role
+      RoleName: ${param:API_NAME}-${aws:region}-bedrock-hr-agent-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -24,11 +24,11 @@ Resources:
   BedrockConsultingAgent:
     Type: AWS::Bedrock::Agent
     Properties:
-      AgentName: ${param:API_NAME}-${aws:region}-${aws:accountId}-consulting-agent
+      AgentName: ${param:API_NAME}-${aws:region}-${aws:accountId}-hr-agent
       KnowledgeBases:
-        - KnowledgeBaseId: P0POGYRRAV
+        - KnowledgeBaseId: YOUR_KB_ID
           KnowledgeBaseState: ENABLED
-          Description: consulting knowledge base
+          Description: hr knowledge base
       Instruction: |
         <instruction>
         You are virtual AI assistant and your task is to analyze the provided context and generate a relevant response based on it.
